@@ -1,7 +1,9 @@
 package com.example.multitagandroidapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -9,15 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
 
 public class CreateAccountScreen extends AppCompatActivity
 {
 
-    //private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private EditText editTextEmail, editTextUsername, editTextPassword;
     private ProgressBar progressBar;
 
@@ -29,7 +36,7 @@ public class CreateAccountScreen extends AppCompatActivity
         configureBackFromSignInBtn();
         configureCreateAccBtn();
 
-        //mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         editTextUsername = (EditText) findViewById(R.id.createAccUsernameInput);
         editTextEmail = (EditText) findViewById(R.id.createAccEmailInput);
@@ -56,7 +63,6 @@ public class CreateAccountScreen extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 registerUser();
-                progressBar.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -152,6 +158,47 @@ public class CreateAccountScreen extends AppCompatActivity
             editTextPassword.requestFocus();
             return;
         }
+
+        //Add the user to Firebase if requirements above are met
+        progressBar.setVisibility(View.VISIBLE); // Give the user visual feedback of loading
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+
+                        if (task.isSuccessful()) //if the user was registered successfully
+                        {
+                            User user = new User(username, email); // Creating user object
+
+                            FirebaseDatabase.getInstance().getReference("Users") //Name of collection
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //Get current user
+                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() { //Checking if the data was inserted into database
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                            if (task.isSuccessful())
+                                            {
+                                                Toast.makeText(CreateAccountScreen.this, "User has been registered successfully!", Toast.LENGTH_LONG).show();
+                                                progressBar.setVisibility(View.GONE);
+
+                                                startActivity(new Intent(CreateAccountScreen.this, SignInScreen.class)); //Go to sign in screen
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();
+                                                progressBar.setVisibility(View.GONE);
+                                            }
+                                        }//end onComplete method
+                                    });
+                        }//end of task is successful if-statement
+                        else //if the user wasn't registered successfully
+                        {
+                            Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    }
+                });
 
     }//end of registerUser method
 }//end of CreateAccountScreen class
