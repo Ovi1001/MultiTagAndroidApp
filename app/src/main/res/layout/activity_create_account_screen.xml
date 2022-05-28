@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".SignInScreen">
+    tools:context=".CreateAccountScreen">
 
     <TextView
         android:layout_width="wrap_content"
@@ -15,15 +15,16 @@
         android:paddingTop="10sp"
         android:paddingEnd="10sp"
         android:paddingBottom="10sp"
-        android:text="Enter Credentials"
+        android:text="Create Account"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/createAccUsernameInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signInUsernameInput"
+            android:id="@+id/createAcc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Username" />
@@ -34,21 +35,22 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/signInPasswordInput"
+            android:id="@+id/createAccPasswordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Enter Password" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/signInBtn"
+        android:id="@+id/createAccBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sign In" />
+        android:text="Create" />
 
     <Button
-        android:id="@+id/backFromSignInBtn"
+        android:id="@+id/backFromCreateAccScreenBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Back" />
+
 </LinearLayout>

@@ -19,13 +19,13 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <Button
-        android:id="@+id/signInBtn"
+        android:id="@+id/signInScreenBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sign In" />
 
     <Button
-        android:id="@+id/createAccountBtn"
+        android:id="@+id/createAccountScreenBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
