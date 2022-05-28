@@ -21,7 +21,7 @@ public class SignInScreen extends AppCompatActivity {
         Button signInBackButton = (Button) findViewById(R.id.backFromSignInBtn);
         signInBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 finish();
             }
         });

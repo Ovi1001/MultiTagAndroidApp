@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity
         configureCreateAccountScreenBtn();
     }
 
-    public void configureSignInScreenBtn()
+    private void configureSignInScreenBtn()
     {
         Button toSignInScreenBtn = (Button) findViewById(R.id.signInScreenBtn);
         toSignInScreenBtn.setOnClickListener(new View.OnClickListener() {
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void configureCreateAccountScreenBtn()
+    private void configureCreateAccountScreenBtn()
     {
         Button toCreateAccScreenBtn = (Button) findViewById(R.id.createAccountScreenBtn);
         toCreateAccScreenBtn.setOnClickListener(new View.OnClickListener() {
