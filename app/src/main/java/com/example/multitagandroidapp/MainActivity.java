@@ -17,16 +17,29 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         configureSignInScreenBtn();
+        configureCreateAccountScreenBtn();
     }
 
     public void configureSignInScreenBtn()
     {
-        Button signInBtn = (Button) findViewById(R.id.signInScreenBtn);
-        signInBtn.setOnClickListener(new View.OnClickListener() {
+        Button toSignInScreenBtn = (Button) findViewById(R.id.signInScreenBtn);
+        toSignInScreenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 startActivity(new Intent(MainActivity.this, SignInScreen.class));
+            }
+        });
+    }
+
+    public void configureCreateAccountScreenBtn()
+    {
+        Button toCreateAccScreenBtn = (Button) findViewById(R.id.createAccountScreenBtn);
+        toCreateAccScreenBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                startActivity(new Intent(MainActivity.this, CreateAccountScreen.class));
             }
         });
     }
