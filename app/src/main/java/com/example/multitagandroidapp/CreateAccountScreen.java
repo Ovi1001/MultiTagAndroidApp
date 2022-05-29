@@ -190,10 +190,10 @@ public class CreateAccountScreen extends AppCompatActivity
 
                                             if (task.isSuccessful()) //If the user was added to the database successfully
                                             {
-                                                Toast.makeText(CreateAccountScreen.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(CreateAccountScreen.this, "Registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
 
-                                                startActivity(new Intent(CreateAccountScreen.this, SignInScreen.class)); //Go to sign in screen
+                                                finish(); //Go to home screen
                                             }
                                             else //If the user was not added to the database successfully
                                             {

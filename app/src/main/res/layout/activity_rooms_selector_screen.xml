@@ -7,10 +7,11 @@
     tools:context=".RoomsSelectorScreen">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="118dp"
-        android:layout_height="88dp"
-        android:text="Welcome"
+        android:id="@+id/roomsScreenWelcomeText"
+        android:layout_width="407dp"
+        android:layout_height="167dp"
+        android:text="Loading..."
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
