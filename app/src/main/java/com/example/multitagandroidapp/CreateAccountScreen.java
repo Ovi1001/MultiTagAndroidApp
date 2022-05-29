@@ -34,7 +34,6 @@ public class CreateAccountScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account_screen);
         configureBackFromSignInBtn();
-        configureCreateAccBtn();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -42,7 +41,9 @@ public class CreateAccountScreen extends AppCompatActivity
         editTextEmail = (EditText) findViewById(R.id.createAccEmailInput);
         editTextPassword = (EditText) findViewById(R.id.createAccPasswordInput);
 
-        progressBar = findViewById(R.id.createAccProgressBar);
+        progressBar = (ProgressBar) findViewById(R.id.createAccProgressBar);
+
+        configureCreateAccBtn();
     }
 
     private void configureBackFromSignInBtn()
@@ -171,27 +172,28 @@ public class CreateAccountScreen extends AppCompatActivity
                         {
                             User user = new User(username, email); // Creating user object
 
-                            FirebaseDatabase.getInstance().getReference("Users") //Name of collection
+                            FirebaseDatabase.getInstance().getReference("Users") //Name of collection (found in Firebase)
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //Get current user
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() { //Checking if the data was inserted into database
+                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
+                                        public void onComplete(@NonNull Task<Void> task) //Checking if the data was inserted into database
+                                        {
 
-                                            if (task.isSuccessful())
+                                            if (task.isSuccessful()) //If the user was added to the database successfully
                                             {
                                                 Toast.makeText(CreateAccountScreen.this, "User has been registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
 
                                                 startActivity(new Intent(CreateAccountScreen.this, SignInScreen.class)); //Go to sign in screen
                                             }
-                                            else
+                                            else //If the user was not added to the database successfully
                                             {
                                                 Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
                                             }
                                         }//end onComplete method
                                     });
-                        }//end of task is successful if-statement
+                        }//end of if user was registered successfully (if-statement)
                         else //if the user wasn't registered successfully
                         {
                             Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();

@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity
 
     private void configureSignInScreenBtn()
     {
-        Button toSignInScreenBtn = (Button) findViewById(R.id.signInScreenBtn);
+        Button toSignInScreenBtn = (Button) findViewById(R.id.toSignInScreenBtn);
         toSignInScreenBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)

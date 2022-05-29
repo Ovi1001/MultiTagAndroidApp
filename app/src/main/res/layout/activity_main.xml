@@ -19,7 +19,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <Button
-        android:id="@+id/signInScreenBtn"
+        android:id="@+id/toSignInScreenBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sign In" />
