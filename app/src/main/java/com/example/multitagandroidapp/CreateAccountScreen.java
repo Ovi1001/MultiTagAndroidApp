@@ -25,7 +25,7 @@ public class CreateAccountScreen extends AppCompatActivity
 {
 
     private FirebaseAuth mAuth;
-    private EditText editTextEmail, editTextUsername, editTextPassword;
+    private EditText editTextEmail, editTextUsername, editTextPassword, editTextConfirmPassword;
     private ProgressBar progressBar;
 
     @Override
@@ -40,6 +40,7 @@ public class CreateAccountScreen extends AppCompatActivity
         editTextUsername = (EditText) findViewById(R.id.createAccUsernameInput);
         editTextEmail = (EditText) findViewById(R.id.createAccEmailInput);
         editTextPassword = (EditText) findViewById(R.id.createAccPasswordInput);
+        editTextConfirmPassword = (EditText) findViewById(R.id.createAccConfirmPasswordInput);
 
         progressBar = (ProgressBar) findViewById(R.id.createAccProgressBar);
 
@@ -73,6 +74,7 @@ public class CreateAccountScreen extends AppCompatActivity
         String username = editTextUsername.getText().toString().trim(); // Getting username provided from text input
         String email = editTextEmail.getText().toString().trim(); // Getting email provided from text input
         String password = editTextPassword.getText().toString().trim(); // Getting password provided from text input
+        String confirmPass = editTextConfirmPassword.getText().toString().trim(); // Getting password from confirm password text input
 
         //Username validation
         Pattern space = Pattern.compile("\\s");
@@ -155,8 +157,15 @@ public class CreateAccountScreen extends AppCompatActivity
 
         if (space.matcher(password).find())
         {
-            editTextPassword.setError("A password cannot have white spaces!");
+            editTextPassword.setError("A password cannot have spaces!");
             editTextPassword.requestFocus();
+            return;
+        }
+
+        if (!password.equals(confirmPass))
+        {
+            editTextConfirmPassword.setError("that isn't the same password. cmon");
+            editTextConfirmPassword.requestFocus();
             return;
         }
 
@@ -181,7 +190,7 @@ public class CreateAccountScreen extends AppCompatActivity
 
                                             if (task.isSuccessful()) //If the user was added to the database successfully
                                             {
-                                                Toast.makeText(CreateAccountScreen.this, "User has been registered successfully!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(CreateAccountScreen.this, "You have been registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
 
                                                 startActivity(new Intent(CreateAccountScreen.this, SignInScreen.class)); //Go to sign in screen
