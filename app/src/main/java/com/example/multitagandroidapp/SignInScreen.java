@@ -89,8 +89,6 @@ public class SignInScreen extends AppCompatActivity
 
         //Password validation
         Pattern space = Pattern.compile("\\s");
-        Pattern uppercase = Pattern.compile("[A-Z]");
-        Pattern digit = Pattern.compile("[0-9]");
 
         if (password.isEmpty())
         {
@@ -102,20 +100,6 @@ public class SignInScreen extends AppCompatActivity
         if (password.length() < 6)
         {
             editTextPassword.setError("Password has to at LEAST be 6 characters! duh");
-            editTextPassword.requestFocus();
-            return;
-        }
-
-        if (!uppercase.matcher(password).find())
-        {
-            editTextPassword.setError("Password has to include at LEAST 1 capital letter!");
-            editTextPassword.requestFocus();
-            return;
-        }
-
-        if (!digit.matcher(password).find())
-        {
-            editTextPassword.setError("Password has to include at LEAST 1 number!");
             editTextPassword.requestFocus();
             return;
         }
@@ -146,5 +130,6 @@ public class SignInScreen extends AppCompatActivity
                 }
             }
         });
+        editTextPassword.setText("");
     }//end userLogin method
 }//end SignInScreen class

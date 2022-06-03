@@ -3,6 +3,7 @@ package com.example.multitagandroidapp;
 public class User
 {
     public String username, email;
+    public int wins;
 
     public User()
     {
@@ -12,5 +13,6 @@ public class User
     {
         this.username = username;
         this.email = email;
+        wins = 0;
     }
 }

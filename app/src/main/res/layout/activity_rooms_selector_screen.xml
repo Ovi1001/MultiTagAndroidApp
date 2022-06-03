@@ -17,13 +17,13 @@
     <ListView
         android:id="@+id/roomsSelectorLobbiesListElement"
         android:layout_width="match_parent"
-        android:layout_height="620dp" >
+        android:layout_height="wrap_content" >
 
     </ListView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Space
@@ -32,11 +32,11 @@
             android:layout_weight="0.1" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/roomsSelectorSignOutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Back" />
+            android:text="Sign Out" />
 
         <Space
             android:layout_width="wrap_content"
@@ -44,7 +44,7 @@
             android:layout_weight="0.1" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/roomsSelectorCreateRoomBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
