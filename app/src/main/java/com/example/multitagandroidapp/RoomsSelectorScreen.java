@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -73,16 +74,31 @@ public class RoomsSelectorScreen extends AppCompatActivity
             }
         });//end of getting username and changing text
 
-        //What is being displayed on the lobbiesList listView
-        List<String> list = new ArrayList<String>();
-        list.add("Apple");
-        list.add("Orange");
-        list.add("Banana");
-        list.add("Grapes");
+        //Gets all of the current open rooms and displays them
+        FirebaseDatabase.getInstance().getReference("Rooms").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                List<String> roomsList = new ArrayList<String>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                {
+                    Room temp = snapshot.getValue(Room.class);
+                    //Toast.makeText(RoomsSelectorScreen.this, temp.owner, Toast.LENGTH_LONG).show();
+                    roomsList.add(temp.owner + "'s room");
+                }
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(RoomsSelectorScreen.this, android.R.layout.simple_list_item_1, list);
-        lobbiesList.setAdapter(arrayAdapter); //Changes the list
+                //Displays all of the rooms on the screen
+                ArrayAdapter arrayAdapter = new ArrayAdapter(RoomsSelectorScreen.this, android.R.layout.simple_list_item_1, roomsList);
+                lobbiesList.setAdapter(arrayAdapter); //Changes the list UI
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) { //if something goes wrong
+                Toast.makeText(RoomsSelectorScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        //Checks for room number picked
         lobbiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
@@ -102,7 +118,13 @@ public class RoomsSelectorScreen extends AppCompatActivity
     //Creates a game room in the lobbies screen
     private void createRoom()
     {
+        Room room = new Room(username);
+        FirebaseDatabase.getInstance().getReference("Rooms") //name of collection
+                .child(room.owner + "'s room").setValue(room); //Adding to database
 
+        Intent intent = new Intent(RoomsSelectorScreen.this, LobbyScreen.class);
+        intent.putExtra("username", username); //For passing information between activities
+        startActivity(intent);
     }
 
     private void configureCreateRoomBtn()
