@@ -21,6 +21,7 @@ public class RoomsSelectorScreen extends AppCompatActivity
     private FirebaseUser user;
     private DatabaseReference reference;
     private String userID;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -33,8 +34,6 @@ public class RoomsSelectorScreen extends AppCompatActivity
         userID = user.getUid(); //Get the user's unique ID
         TextView welcomeText = (TextView) findViewById(R.id.roomsScreenWelcomeText);
 
-        //Toast.makeText(RoomsSelectorScreen.this, userID + "", Toast.LENGTH_LONG).show();
-
         reference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
@@ -43,12 +42,13 @@ public class RoomsSelectorScreen extends AppCompatActivity
 
                 if (userProfile != null)
                 {
-                    welcomeText.setText("Welcome, " + userProfile.username);
+                    username = userProfile.username;
+                    welcomeText.setText("Hi, " + username);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error)
+            public void onCancelled(@NonNull DatabaseError error) //if did not successfully retrieve username
             {
                 welcomeText.setText("N/A");
             }
