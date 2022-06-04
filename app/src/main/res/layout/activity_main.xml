@@ -15,7 +15,7 @@
         android:paddingTop="10sp"
         android:paddingEnd="10sp"
         android:paddingBottom="10sp"
-        android:text="TITLE OF GAME"
+        android:text="Multi Tag"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <Button

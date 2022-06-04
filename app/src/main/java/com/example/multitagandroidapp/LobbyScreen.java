@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 public class LobbyScreen extends AppCompatActivity {
 
     private String username; //Current user's name
+    private boolean isHost;
     private DatabaseReference roomReference;
 
     @Override
@@ -41,7 +42,8 @@ public class LobbyScreen extends AppCompatActivity {
                         roomName.setText(room.owner + "'s room"); //Get the username passed and set it equal to room name
 
                         //Adds the player that joined lobby to the database
-                        if (!room.owner.equals(username))
+                        isHost = room.owner.equals(username);
+                        if (!isHost)
                         {
                             room.player = username;
                             room.playerID = FirebaseAuth.getInstance().getCurrentUser().getUid();

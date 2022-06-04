@@ -17,8 +17,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class CreateAccountScreen extends AppCompatActivity
@@ -28,6 +34,8 @@ public class CreateAccountScreen extends AppCompatActivity
     private EditText editTextEmail, editTextUsername, editTextPassword, editTextConfirmPassword;
     private ProgressBar progressBar;
 
+    private List<String> allUsernames;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -35,8 +43,28 @@ public class CreateAccountScreen extends AppCompatActivity
         setContentView(R.layout.activity_create_account_screen);
         configureBackFromSignInBtn();
 
-        mAuth = FirebaseAuth.getInstance();
+        allUsernames = new ArrayList<String>();
+        //Getting all usernames used from database
+        FirebaseDatabase.getInstance().getReference("Usernames").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                allUsernames.clear();
+                for (DataSnapshot data : snapshot.getChildren())
+                {
+                    String temp = data.getValue(String.class);
+                    allUsernames.add(temp.toLowerCase());
+                }
+                Toast.makeText(CreateAccountScreen.this, allUsernames.size() + "", Toast.LENGTH_SHORT).show();
+            }//end onDataChange method
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(CreateAccountScreen.this, "Unable to retrieve usernames", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        //Initializing variables
+        mAuth = FirebaseAuth.getInstance();
         editTextUsername = (EditText) findViewById(R.id.createAccUsernameInput);
         editTextEmail = (EditText) findViewById(R.id.createAccEmailInput);
         editTextPassword = (EditText) findViewById(R.id.createAccPasswordInput);
@@ -104,6 +132,13 @@ public class CreateAccountScreen extends AppCompatActivity
         if (space.matcher(username).find()) // checks for a white space character
         {
             editTextUsername.setError("A username cannot have white spaces!");
+            editTextUsername.requestFocus();
+            return;
+        }
+
+        if (allUsernames.contains(username.toLowerCase()))
+        {
+            editTextUsername.setError("Username taken!");
             editTextUsername.requestFocus();
             return;
         }
@@ -190,6 +225,8 @@ public class CreateAccountScreen extends AppCompatActivity
 
                                             if (task.isSuccessful()) //If the user was added to the database successfully
                                             {
+                                                allUsernames.add(username.toLowerCase());
+                                                FirebaseDatabase.getInstance().getReference("Usernames").setValue(allUsernames);
                                                 Toast.makeText(CreateAccountScreen.this, "Registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
 
