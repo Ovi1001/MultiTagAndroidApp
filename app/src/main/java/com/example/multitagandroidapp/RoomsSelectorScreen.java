@@ -54,6 +54,7 @@ public class RoomsSelectorScreen extends AppCompatActivity
         configureSignOutBtn();
         configureCreateRoomBtn();
 
+        //Displaying the greeting text at the top of the screen
         referenceUsers.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot)
@@ -83,47 +84,60 @@ public class RoomsSelectorScreen extends AppCompatActivity
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
                     Room temp = snapshot.getValue(Room.class);
-                    //Toast.makeText(RoomsSelectorScreen.this, temp.owner, Toast.LENGTH_LONG).show();
-                    roomsList.add(temp.owner + "'s room");
+                    roomsList.add(temp.owner + "'s room" + "\n" + temp.currentPlayers + "/2");
                 }
 
                 //Displays all of the rooms on the screen
                 ArrayAdapter arrayAdapter = new ArrayAdapter(RoomsSelectorScreen.this, android.R.layout.simple_list_item_1, roomsList);
                 lobbiesList.setAdapter(arrayAdapter); //Changes the list UI
-            }
+
+                //Checks for room number picked (Inside onDataChange method for optimization of roomsList ArrayList)
+                lobbiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int pos, long id)
+                    {
+                        //Get the room name that was clicked
+                        String fullRoomName = roomsList.get(pos);
+                        //Checks to see if the lobby is full
+                        if (fullRoomName.substring(fullRoomName.length() - 3).equals("1/2")) {
+                            //send just the username, not the other part of the string
+                            joinRoom(fullRoomName.substring(0, fullRoomName.length() - 11));
+                        }
+                        else //If the lobby is full
+                        {
+                            Toast.makeText(RoomsSelectorScreen.this, "Lobby Full!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }//end onDataChange method
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) { //if something goes wrong
                 Toast.makeText(RoomsSelectorScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
             }
-        });
-
-        //Checks for room number picked
-        lobbiesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                if (pos == 0)
-                {
-                    Toast.makeText(RoomsSelectorScreen.this, "apple", Toast.LENGTH_LONG).show();
-                }
-                else if (pos == 1)
-                {
-                    Toast.makeText(RoomsSelectorScreen.this, "orange", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+        });//end of room functionality
 
     }//end onCreate method
+
+    //Joins a room after being clicked
+    private void joinRoom(String roomOwner)
+    {
+        Intent intent = new Intent(RoomsSelectorScreen.this, LobbyScreen.class);
+        intent.putExtra("username", username);
+        intent.putExtra("roomName", roomOwner);
+        startActivity(intent);
+    }
 
     //Creates a game room in the lobbies screen
     private void createRoom()
     {
-        Room room = new Room(username);
+        Room room = new Room(username, userID);
         FirebaseDatabase.getInstance().getReference("Rooms") //name of collection
                 .child(room.owner + "'s room").setValue(room); //Adding to database
 
         Intent intent = new Intent(RoomsSelectorScreen.this, LobbyScreen.class);
-        intent.putExtra("username", username); //For passing information between activities
+        intent.putExtra("username", username);
+        intent.putExtra("roomName", username); //For passing information between activities
         startActivity(intent);
     }
 
