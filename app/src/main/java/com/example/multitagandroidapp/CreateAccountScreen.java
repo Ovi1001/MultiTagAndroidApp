@@ -23,6 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -42,14 +43,15 @@ public class CreateAccountScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account_screen);
         configureBackFromSignInBtn();
+        configureCreateAccBtn();
 
-        allUsernames = new ArrayList<String>();
         //Getting all usernames used from database
+        allUsernames = new ArrayList<String>();
         FirebaseDatabase.getInstance().getReference("Usernames").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allUsernames.clear();
-                for (DataSnapshot data : snapshot.getChildren())
+                for (DataSnapshot data : snapshot.getChildren()) //Iterates the list of usernames
                 {
                     String temp = data.getValue(String.class);
                     allUsernames.add(temp.toLowerCase());
@@ -58,7 +60,7 @@ public class CreateAccountScreen extends AppCompatActivity
             }//end onDataChange method
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) { //If something went wrong
                 Toast.makeText(CreateAccountScreen.this, "Unable to retrieve usernames", Toast.LENGTH_LONG).show();
             }
         });
@@ -69,10 +71,7 @@ public class CreateAccountScreen extends AppCompatActivity
         editTextEmail = (EditText) findViewById(R.id.createAccEmailInput);
         editTextPassword = (EditText) findViewById(R.id.createAccPasswordInput);
         editTextConfirmPassword = (EditText) findViewById(R.id.createAccConfirmPasswordInput);
-
         progressBar = (ProgressBar) findViewById(R.id.createAccProgressBar);
-
-        configureCreateAccBtn();
     }
 
     private void configureBackFromSignInBtn()
@@ -225,8 +224,7 @@ public class CreateAccountScreen extends AppCompatActivity
 
                                             if (task.isSuccessful()) //If the user was added to the database successfully
                                             {
-                                                allUsernames.add(username.toLowerCase());
-                                                FirebaseDatabase.getInstance().getReference("Usernames").setValue(allUsernames);
+                                                FirebaseDatabase.getInstance().getReference("Usernames").push().setValue(username.toLowerCase());
                                                 Toast.makeText(CreateAccountScreen.this, "Registered successfully!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
 
@@ -234,7 +232,7 @@ public class CreateAccountScreen extends AppCompatActivity
                                             }
                                             else //If the user was not added to the database successfully
                                             {
-                                                Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(CreateAccountScreen.this, "something went wrong. Try again!", Toast.LENGTH_LONG).show();
                                                 progressBar.setVisibility(View.GONE);
                                             }
                                         }//end onComplete method
@@ -242,7 +240,7 @@ public class CreateAccountScreen extends AppCompatActivity
                         }//end of if user was registered successfully (if-statement)
                         else //if the user wasn't registered successfully
                         {
-                            Toast.makeText(CreateAccountScreen.this, "something broke and failed. Try again!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(CreateAccountScreen.this,  task.getException() + "", Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                         }
                     }
