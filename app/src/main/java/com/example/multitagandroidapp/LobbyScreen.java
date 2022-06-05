@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,10 +23,11 @@ import java.util.HashMap;
 public class LobbyScreen extends AppCompatActivity {
 
     private String username, userID, hostName, oppenentName; //Current user's name
-    private boolean isHost;
+    private boolean isHost, finishedLoading;
     private Handler handler;
     private DatabaseReference roomReference;
     private ValueEventListener leaveChange, playerJoin;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,6 +40,8 @@ public class LobbyScreen extends AppCompatActivity {
 
         //Initializing variables
         handler = new Handler();
+        finishedLoading = false;
+        progressBar = (ProgressBar) findViewById(R.id.lobbyScreenProgressBar);
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         TextView roomName = (TextView) findViewById(R.id.lobbyScreenRoomNameText);
         roomReference = FirebaseDatabase.getInstance().getReference("Rooms")
@@ -45,6 +49,7 @@ public class LobbyScreen extends AppCompatActivity {
         username = getIntent().getExtras().getString("username");
 
         //Instantiate room object / Change title of LobbyScreen
+        progressBar.setVisibility(View.VISIBLE);
         roomReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
@@ -125,8 +130,11 @@ public class LobbyScreen extends AppCompatActivity {
                     //Actually attach the listener to the database
                     FirebaseDatabase.getInstance().getReference("Users").child(userID).addValueEventListener(leaveChange);
                 }
+
+                progressBar.setVisibility(View.GONE);
+                finishedLoading = true;
             }
-        }, 3000); //end of handler call
+        }, 1500); //end of handler call
 
     }//end onCreate method
 
@@ -174,41 +182,49 @@ public class LobbyScreen extends AppCompatActivity {
     //Delete the room or open up the space
     private void leaveRoom()
     {
-        if (!isHost)
+        if (finishedLoading)
         {
-            HashMap<String, Object> update = new HashMap<>();
-            update.put("currentPlayers", 1);
-            update.put("player", "");
-            update.put("playerID", "");
-            roomReference.updateChildren(update);
+            if (!isHost)
+            {
+                HashMap<String, Object> update = new HashMap<>();
+                update.put("currentPlayers", 1);
+                update.put("player", "");
+                update.put("playerID", "");
+                roomReference.updateChildren(update);
+            }
+            else
+            { //if the hosts leaves
+                roomReference.removeEventListener(playerJoin);
+                roomReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                    {
+                        Room room = snapshot.getValue(Room.class);
+                        if (room.currentPlayers == 1)
+                        {
+                            roomReference.removeValue();
+                        }
+                        //tell the other player that the lobby no longer exists
+                        else if (room.currentPlayers == 2)
+                        {
+                            FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(room.playerID).child("leave").setValue(true);
+                            roomReference.removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(LobbyScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }//end else statement
+            finish();
         }
         else
-        { //if the hosts leaves
-            roomReference.removeEventListener(playerJoin);
-            roomReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Room room = snapshot.getValue(Room.class);
-                    if (room.currentPlayers == 1)
-                    {
-                        roomReference.removeValue();
-                    }
-                    //tell the other player that the lobby no longer exists
-                    else if (room.currentPlayers == 2)
-                    {
-                        FirebaseDatabase.getInstance().getReference("Users")
-                                .child(room.playerID).child("leave").setValue(true);
-                        roomReference.removeValue();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(LobbyScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
-                }
-            });
-        }//end else statement
-        finish();
+        {
+            Toast.makeText(LobbyScreen.this, "Please wait before leaving!", Toast.LENGTH_SHORT).show();
+        }
     }//end leaveRoom method
 
     @Override
