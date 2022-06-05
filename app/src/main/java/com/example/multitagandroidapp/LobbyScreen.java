@@ -4,13 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,10 +21,11 @@ import java.util.HashMap;
 
 public class LobbyScreen extends AppCompatActivity {
 
-    private String username; //Current user's name
+    private String username, userID, hostName, oppenentName; //Current user's name
     private boolean isHost;
+    private Handler handler;
     private DatabaseReference roomReference;
-    private ValueEventListener leaveChange;
+    private ValueEventListener leaveChange, playerJoin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,10 +33,12 @@ public class LobbyScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby_screen);
 
-        //Configuring buttons
+        //Configuring buttons and methods
         configureLeaveRoomBtn();
 
         //Initializing variables
+        handler = new Handler();
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         TextView roomName = (TextView) findViewById(R.id.lobbyScreenRoomNameText);
         roomReference = FirebaseDatabase.getInstance().getReference("Rooms")
                 .child(getIntent().getExtras().getString("roomName") + "'s room");
@@ -47,16 +50,19 @@ public class LobbyScreen extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
                         Room room = snapshot.getValue(Room.class);
+                        hostName = room.owner;
                         roomName.setText(room.owner + "'s room"); //Get the username passed and set it equal to room name
 
                         //Adds the player that joined lobby to the database
-                        isHost = room.owner.equals(username);
+                        isHost = (room.owner).equalsIgnoreCase(username);
+                        updateTextNames(room.player.equals(""));
                         if (!isHost)
                         {
-                            room.player = username;
-                            room.playerID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                            room.currentPlayers = 2;
-                            roomReference.setValue(room);
+                            HashMap<String, Object> update = new HashMap<>();
+                            update.put("player", username);
+                            update.put("playerID", userID);
+                            update.put("currentPlayers", 2);
+                            roomReference.updateChildren(update);
                         }
                     }
 
@@ -68,42 +74,90 @@ public class LobbyScreen extends AppCompatActivity {
                     }
                 });
 
+        handler.postDelayed(new Runnable() { //Going to wait 3 seconds before checking isHost
+            @Override
+            public void run()
+            {
+                //Create the listener for if a player joins
+                if (isHost)
+                {
+                    playerJoin = new ValueEventListener()
+                    {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot)
+                        {
+                            Room room = snapshot.getValue(Room.class);
+                            oppenentName = room.player;
+                            updateTextNames(oppenentName.equals(""));
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    };
+                    //Actually attach the listener to the database
+                    roomReference.addValueEventListener(playerJoin);
+                }
+
+                if (!isHost)
+                {
+                    //Create the listener for if the host leaves
+                    leaveChange = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            User user = snapshot.getValue(User.class);
+                            if (user.leave)
+                            {
+                                Toast.makeText(LobbyScreen.this, "Host has left", Toast.LENGTH_SHORT).show();
+                                HashMap<String, Object> update = new HashMap<>();
+                                update.put("leave", false);
+                                FirebaseDatabase.getInstance().getReference("Users").child(userID).updateChildren(update);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    };
+                    //Actually attach the listener to the database
+                    FirebaseDatabase.getInstance().getReference("Users").child(userID).addValueEventListener(leaveChange);
+                }
+            }
+        }, 3000); //end of handler call
+
+    }//end onCreate method
+
+    private void updateTextNames(boolean left)
+    {
+        TextView hostNameText = (TextView) findViewById(R.id.lobbyScreenHostNameText);
+        TextView playerNameText = (TextView) findViewById(R.id.lobbyScreenPlayerNameText);
+        if (isHost)
+        {
+            hostNameText.setText("You");
+            playerNameText.setText(oppenentName);
+        }
+
         if (!isHost)
         {
-            //Create the listener for if the host leaves
-            leaveChange = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
-                    if (user.leave)
-                    {
-                        Toast.makeText(LobbyScreen.this, "Host has left", Toast.LENGTH_SHORT).show();
-                        HashMap<String, Object> update = new HashMap<>();
-                        update.put("leave", false);
-                        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
-                                getCurrentUser().getUid()).updateChildren(update);
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            };
-            //Actually attach the listener to the database
-            FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
-                    getCurrentUser().getUid()).addValueEventListener(leaveChange);
+            hostNameText.setText(hostName);
+            playerNameText.setText("You");
         }
-    }//end onCreate method
+        else if (left)
+        {
+            playerNameText.setText("Finding Oppenent...");
+        }
+    }
 
     //When the activity closes / finishes
     @Override
     protected void onDestroy()
     {
         super.onDestroy();
-        FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().
-            getCurrentUser().getUid()).removeEventListener(leaveChange);
+        if (!isHost)
+            FirebaseDatabase.getInstance().getReference("Users").child(userID).removeEventListener(leaveChange);
     }
 
     private void configureLeaveRoomBtn()
@@ -130,6 +184,7 @@ public class LobbyScreen extends AppCompatActivity {
         }
         else
         { //if the hosts leaves
+            roomReference.removeEventListener(playerJoin);
             roomReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -152,9 +207,9 @@ public class LobbyScreen extends AppCompatActivity {
                     Toast.makeText(LobbyScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
                 }
             });
-        }
+        }//end else statement
         finish();
-    }
+    }//end leaveRoom method
 
     @Override
     public void onBackPressed()
