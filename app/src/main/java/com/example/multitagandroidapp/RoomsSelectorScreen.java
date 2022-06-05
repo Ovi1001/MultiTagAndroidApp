@@ -43,16 +43,16 @@ public class RoomsSelectorScreen extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rooms_selector_screen);
 
+        //Configuring buttons
+        configureSignOutBtn();
+        configureCreateRoomBtn();
+
         //Initializing variables
         lobbiesList = (ListView) findViewById(R.id.roomsSelectorLobbiesListElement);
         user = FirebaseAuth.getInstance().getCurrentUser();
         referenceUsers = FirebaseDatabase.getInstance().getReference("Users");
         userID = user.getUid(); //Get the user's unique ID
         TextView welcomeText = (TextView) findViewById(R.id.roomsScreenWelcomeText);
-
-        //Configuring buttons
-        configureSignOutBtn();
-        configureCreateRoomBtn();
 
         //Displaying the greeting text at the top of the screen
         referenceUsers.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -116,8 +116,14 @@ public class RoomsSelectorScreen extends AppCompatActivity
                 Toast.makeText(RoomsSelectorScreen.this, "Something went wrong. Try again", Toast.LENGTH_LONG).show();
             }
         });//end of room functionality
-
     }//end onCreate method
+
+    //If the back button is pressed, prompt the sign out
+    @Override
+    public void onBackPressed()
+    {
+        openSignOutRoomDialog();
+    }
 
     //Joins a room after being clicked
     private void joinRoom(String roomOwner)
@@ -158,23 +164,17 @@ public class RoomsSelectorScreen extends AppCompatActivity
         signOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openSignOutRoomDialog(v);
+                openSignOutRoomDialog();
             }
         });
     }
 
     //Configures the pop-up on screen when clicking sign out
-    private void openSignOutRoomDialog(View v)
+    private void openSignOutRoomDialog()
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to sign out?");
-        builder.setNegativeButton("No way jose", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //Method is empty bc just needs to close dialog
-            }
-        });
-
+        builder.setNegativeButton("No way jose", null);
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() { //If the user clicks yes
             @Override
             public void onClick(DialogInterface dialog, int which) {

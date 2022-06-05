@@ -23,9 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class CreateAccountScreen extends AppCompatActivity
@@ -56,7 +54,6 @@ public class CreateAccountScreen extends AppCompatActivity
                     String temp = data.getValue(String.class);
                     allUsernames.add(temp.toLowerCase());
                 }
-                Toast.makeText(CreateAccountScreen.this, allUsernames.size() + "", Toast.LENGTH_SHORT).show();
             }//end onDataChange method
 
             @Override
