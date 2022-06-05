@@ -3,7 +3,7 @@ package com.example.multitagandroidapp;
 public class User
 {
     public String username, email;
-    public boolean leave;
+    public boolean leave, start;
     public int wins;
 
     public User()
