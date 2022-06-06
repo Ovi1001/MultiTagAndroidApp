@@ -174,8 +174,15 @@ public class LobbyScreen extends AppCompatActivity {
 
     private void startGame()
     {
+        if (!isHost)
+        {
+            FirebaseDatabase.getInstance().getReference("Users").child(userID).removeEventListener(leaveChange);
+            FirebaseDatabase.getInstance().getReference("Users").child(userID).child("start").setValue(false);
+        }
         Toast.makeText(LobbyScreen.this, "Starting...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LobbyScreen.this, gameScreen.class);
+        intent.putExtra("isHost", isHost); //passing info to the new activity
+        intent.putExtra("username", username);
         startActivity(intent);
     }
 
