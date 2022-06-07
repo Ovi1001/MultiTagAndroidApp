@@ -23,7 +23,7 @@ import java.util.HashMap;
 
 public class LobbyScreen extends AppCompatActivity {
 
-    private String username, userID, hostName, oppenentName, oppenentID; //Current user's name
+    private String username, userID, hostName, hostID, oppenentName, oppenentID; //Current user's name
     private int currentPlayers;
     private boolean isHost, finishedLoading;
     private Button startBtn;
@@ -60,6 +60,7 @@ public class LobbyScreen extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot)
                     {
                         Room room = snapshot.getValue(Room.class);
+                        hostID = room.ownerID;
                         hostName = room.owner;
                         roomName.setText(room.owner + "'s room"); //Get the username passed and set it equal to room name
 
@@ -181,6 +182,13 @@ public class LobbyScreen extends AppCompatActivity {
         }
         Toast.makeText(LobbyScreen.this, "Starting...", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(LobbyScreen.this, gameScreen.class);
+        if (isHost)
+        {
+            intent.putExtra("oppenentName", oppenentName);
+            intent.putExtra("oppenentID", oppenentID);
+        }
+        intent.putExtra("hostID", hostID);
+        intent.putExtra("hostName", hostName);
         intent.putExtra("isHost", isHost); //passing info to the new activity
         intent.putExtra("username", username);
         startActivity(intent);

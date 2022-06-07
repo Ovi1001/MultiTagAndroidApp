@@ -2,7 +2,7 @@ package com.example.multitagandroidapp;
 
 public class Room
 {
-    public String owner, ownerID, player, playerID;
+    public String owner, ownerID, player, playerID, currentLetters;
     public int currentPlayers;
 
     public Room()

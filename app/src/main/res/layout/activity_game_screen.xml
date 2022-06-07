@@ -140,4 +140,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/gameScreenWordErrorText"
+        android:layout_width="161dp"
+        android:layout_height="23dp"
+        android:layout_marginEnd="52dp"
+        android:layout_marginBottom="4dp"
+        android:text=""
+        android:textColor="#FF0000"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/gameScreenInputWordEditText"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
