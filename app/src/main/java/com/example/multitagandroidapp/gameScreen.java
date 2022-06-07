@@ -218,11 +218,11 @@ public class gameScreen extends AppCompatActivity
                         preUpdate.put("word", extractedWord);
                         FirebaseDatabase.getInstance().getReference("Users").child(hostID).updateChildren(preUpdate);
                     }
-                    //Check if the word exists in the english dictionary
-                    if (extractedWord.toLowerCase().contains(useLetters))
-                        isWord(extractedWord);
-                    else
-                        message = "Use letters provided!";
+//                    //Check if the word exists in the english dictionary
+//                    if (extractedWord.toLowerCase().contains(useLetters))
+                    isWord(extractedWord);
+//                    else
+//                        message = "Use letters provided!";
 
                     //Give it loading time
                     handler.postDelayed(new Runnable() {
