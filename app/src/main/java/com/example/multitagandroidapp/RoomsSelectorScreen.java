@@ -81,7 +81,7 @@ public class RoomsSelectorScreen extends AppCompatActivity
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
                 List<String> roomsList = new ArrayList<String>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) //For each loop
                 {
                     Room temp = snapshot.getValue(Room.class);
                     roomsList.add(temp.owner + "'s room" + "\n" + temp.currentPlayers + "/2");

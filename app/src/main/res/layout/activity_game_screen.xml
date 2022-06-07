@@ -4,46 +4,140 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:focusableInTouchMode="true"
     tools:context=".gameScreen" >
 
-    <TextView
-        android:id="@+id/lobbyScreenTextView"
-        android:layout_width="280dp"
-        android:layout_height="541dp"
-        android:text="This is a test"
+    <ImageView
+        android:id="@+id/gameScreenBombPng"
+        android:layout_width="323dp"
+        android:layout_height="267dp"
+        android:layout_marginEnd="188dp"
+        android:layout_marginBottom="524dp"
+        android:rotation="180"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
+        app:srcCompat="@drawable/img" />
+
+    <TextView
+        android:id="@+id/gameScreenTimerText"
+        android:layout_width="138dp"
+        android:layout_height="45dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/gameScreenLettersText"
+        android:layout_width="99dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="N/A"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/gameScreenBombPng"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gameScreenTimerText"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/gameScreenHostCircle"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="68dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/img_1" />
+
+    <ImageView
+        android:id="@+id/gameScreenPlayerCircle"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="220dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.726" />
+        app:srcCompat="@drawable/img_2" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/lobbyScreenTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/gameScreenTextInput"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search Word Here" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <Button
-        android:id="@+id/gameScreenGo"
+    <TextView
+        android:id="@+id/gameScreenPlayerNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Search"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="108dp"
+        android:layout_marginTop="8dp"
+        android:text="Loading..."
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lobbyScreenTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/gameScreenPlayerCircle" />
+
+    <TextView
+        android:id="@+id/gameScreenHostNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="4dp"
+        android:text="Loading..."
+        app:layout_constraintStart_toEndOf="@+id/gameScreenPlayerArrow"
+        app:layout_constraintTop_toBottomOf="@+id/gameScreenHostCircle" />
+
+    <ImageView
+        android:id="@+id/gameScreenHostArrow"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/img_3" />
+
+    <ImageView
+        android:id="@+id/gameScreenPlayerArrow"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="148dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/img_3" />
+
+    <TextView
+        android:id="@+id/gameScreenHostWordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/gameScreenHostCircle"
+        app:layout_constraintEnd_toEndOf="@+id/gameScreenHostCircle"
+        app:layout_constraintStart_toStartOf="@+id/gameScreenHostCircle"
+        app:layout_constraintTop_toTopOf="@+id/gameScreenHostCircle" />
+
+    <TextView
+        android:id="@+id/gameScreenPlayerWordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="@+id/gameScreenPlayerCircle"
+        app:layout_constraintEnd_toEndOf="@+id/gameScreenPlayerCircle"
+        app:layout_constraintStart_toStartOf="@+id/gameScreenPlayerCircle"
+        app:layout_constraintTop_toTopOf="@+id/gameScreenPlayerCircle" />
+
+    <EditText
+        android:id="@+id/gameScreenInputWordEditText"
+        android:imeOptions="actionNext"
+        android:layout_width="295dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="364dp"
+        android:ems="10"
+        android:inputType="text"
+        android:hint="Type a word!"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.413"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

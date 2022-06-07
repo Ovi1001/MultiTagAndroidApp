@@ -15,7 +15,7 @@
         android:paddingTop="10sp"
         android:paddingEnd="10sp"
         android:paddingBottom="10sp"
-        android:text="Multi Tag"
+        android:text="Word Bomb"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
 
     <Button
